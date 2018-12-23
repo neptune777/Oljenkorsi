@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Oljenkorsi</string>
+    <string name="accuracyTextView">Tämän tekstin tilalle päivittyy paikannuksen tarkkuus</string>
+    <string name="lokaatioTextView">Tämän tekstin tilalle päivittyy sijainti</string>
+    <string name="lokaatioTypeTextView">Tämän tekstin tilalle päivittyy paikannustapa</string>
+    <string name="timeTextView">Tämän tekstin tilalle päivittyy paikannusaika</string>
+    <string name="showOnMap">Näytä kartalla</string>
+    <string name="button">Pyydä apua</string>
+    <string name="button2">Asetukset</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="action_settings">Settings</string>
+    <string name="pref_size_key" translatable="false">size</string>
+</resources>
