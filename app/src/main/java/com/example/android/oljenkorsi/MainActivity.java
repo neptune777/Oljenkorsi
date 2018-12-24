@@ -3,6 +3,7 @@ package com.example.android.oljenkorsi;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -12,6 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
+import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -20,12 +23,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private LocationManager mLocationManager;
     private LocationListener mLocationListener;
@@ -47,6 +52,8 @@ public class MainActivity extends AppCompatActivity{
     private static final String LOCATION_EXTRA = "query";
     private static final String ONOFF_EXTRA = "onoff";
     private static final String LOCATIONUPDATES_EXTRA = "locUpdates";
+    private ArrayList<Integer> mPhoneNumbers;
+    private String mMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,8 +204,62 @@ public class MainActivity extends AppCompatActivity{
         }
 
 
+        setupSharedPreferences();
+
+    }
 
 
+    private void setupSharedPreferences() {
+        // Get all of the values from shared preferences to set it up
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+
+
+try {
+    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number1_pref),
+            getResources().getString(R.string.number1_pref_default))));
+
+    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number2_pref),
+            getResources().getString(R.string.number2_pref_default))));
+
+    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number3_pref),
+            getResources().getString(R.string.number3_pref_default))));
+
+    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number4_pref),
+            getResources().getString(R.string.number4_pref_default))));
+
+    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number5_pref),
+            getResources().getString(R.string.number5_pref_default))));
+
+
+    mMessage = sharedPreferences.getString(getString(R.string.message_pref),
+            getResources().getString(R.string.message_pref_default));
+
+}catch (NumberFormatException e){
+    Log.d("setUpSharedPreferences"," " + e.getLocalizedMessage());
+}
+
+
+
+
+
+
+        // Register the listener
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+
+    public void sendSMS(String phoneNo, String msg) {
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
+            Toast.makeText(getApplicationContext(), "Message Sent",
+                    Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
+            Toast.makeText(getApplicationContext(),ex.getMessage().toString(),
+                    Toast.LENGTH_LONG).show();
+            ex.printStackTrace();
+        }
     }
 
 
@@ -459,5 +520,8 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
+    }
 }
