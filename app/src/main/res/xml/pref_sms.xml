@@ -1,45 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 
+
+    >
 
 
     <Preference
-        android:key="@string/number1_pref"
+        android:background="@drawable/back"
         android:defaultValue="@string/number1_pref_default"
-        android:title="Prööt"
-        android:summary="Prööt"
         android:icon="@mipmap/ic_contacts"
+        android:key="@string/number1_pref"
+
+        android:title="Prööt"
         />
 
     <Preference
-        android:key="@string/number2_pref"
         android:defaultValue="@string/number2_pref_default"
-        android:summary="Prööt"
-        android:title="Prööt"
         android:icon="@mipmap/ic_contacts"
-       />
-
-    <Preference
-        android:key="@string/number3_pref"
-        android:defaultValue="@string/number3_pref_default"
-        android:summary="Prööt"
+        android:key="@string/number2_pref"
         android:title="Prööt"
-        android:icon="@mipmap/ic_contacts"
         />
 
     <Preference
-        android:key="@string/number4_pref"
-        android:defaultValue="@string/number4_pref_default"
-        android:summary="Prööt"
-        android:title="Prööt"
+        android:defaultValue="@string/number3_pref_default"
         android:icon="@mipmap/ic_contacts"
+        android:key="@string/number3_pref"
+        android:title="Prööt" />
+
+    <Preference
+        android:defaultValue="@string/number4_pref_default"
+        android:icon="@mipmap/ic_contacts"
+        android:key="@string/number4_pref"
+        android:title="Prööt" />
+
+    <Preference
+        android:defaultValue="@string/number5_pref_default"
+        android:icon="@mipmap/ic_contacts"
+        android:key="@string/number5_pref"
+        android:title="Prööt"
 
         />
 
 
     <EditTextPreference
-
+        android:icon="@mipmap/ic_contacts"
+        android:background="@drawable/border"
         android:key="@string/message_pref"
         android:defaultValue="@string/message_pref_default"
        />

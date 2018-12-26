@@ -18,10 +18,16 @@
     <string name="number4_pref">number_4</string>
     <string name="number5_pref">number_5</string>
     <string name="number1_pref_default">1. puhelinnumero</string>
-    <string name="number2_pref_default">2. puhelinnumero (tarvittaessa)</string>
-    <string name="number3_pref_default">3. puhelinnumero (tarvittaessa)</string>
-    <string name="number4_pref_default">4. puhelinnumero (tarvittaessa)</string>
-    <string name="number5_pref_default">5. puhelinnumero (tarvittaessa)</string>
+    <string name="number2_pref_default">2. puhelinnumero</string>
+    <string name="number3_pref_default">3. puhelinnumero</string>
+    <string name="number4_pref_default">4. puhelinnumero</string>
+    <string name="number5_pref_default">5. puhelinnumero</string>
+    <string name="number1_name"></string>
+    <string name="number2_name"></string>
+    <string name="number3_name"></string>
+    <string name="number4_name"></string>
+    <string name="number5_name"></string>
+    <string name="number_field_default">(tarvittaessa)</string>
 
 
 

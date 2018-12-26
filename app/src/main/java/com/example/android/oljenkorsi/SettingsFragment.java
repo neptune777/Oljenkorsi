@@ -22,11 +22,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
 import android.os.Parcelable;
 import android.provider.ContactsContract;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
@@ -35,10 +37,14 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 
 // TODO (1) Implement OnPreferenceChangeListener
@@ -48,6 +54,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     private final int PICK_CONTACT = 1;
     private Preference num1;
     private String mActivePreference_key;
+    Person mPerson;
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
@@ -58,42 +65,79 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
         PreferenceScreen prefScreen = getPreferenceScreen();
         int count = prefScreen.getPreferenceCount();
-
+       // prefScreen.getPreference(R.string.number1_pref).setLayoutResource((android.support.constraint.ConstraintLayout)View.inflate(getContext(),R.layout.custom_layout, null));
+        //rLay=(android.support.constraint.ConstraintLayout)View.inflate(getContext(),R.layout.custom_layout, null);
         // Go through all of the preferences, and set up their preference summary.
         for (int i = 0; i < count; i++) {
             Preference p = prefScreen.getPreference(i);
             // You don't need to set up preference summaries for checkbox preferences because
             // they are already set up in xml using summaryOff and summary On
 
-            if(!(p instanceof EditTextPreference) && p.getSummary()==null && i==0){
 
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(p.getKey(), getResources().getString(R.string.number1_pref_default));
-                editor.commit();
-            }else if(!(p instanceof EditTextPreference) && p.getSummary()==null && i==1){
 
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(p.getKey(), getResources().getString(R.string.number2_pref_default));
-                editor.commit();
-            }else if(!(p instanceof EditTextPreference) && p.getSummary()==null && i==2){
-
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(p.getKey(), getResources().getString(R.string.number3_pref_default));
-                editor.commit();
-            }
-            else if(!(p instanceof EditTextPreference) && p.getSummary()==null && i==3){
-
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(p.getKey(), getResources().getString(R.string.number4_pref_default));
-                editor.commit();
-            }
 
             if (!(p instanceof CheckBoxPreference)) {
 
-                String value = sharedPreferences.getString(p.getKey(), "");
 
-                Log.d("value_","value_" + value);
-                setPreferenceSummary(p, value);
+                Gson gson = new Gson();
+                String json = sharedPreferences.getString(p.getKey(), "");
+             //  gson.fromJson(json, Person.class).getClass();
+                Person person;
+
+                if(i==0) {
+                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
+                }else if(i==1) {
+                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
+                }else if(i==2) {
+                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
+                }else if(i==3) {
+                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
+                }else if(i==4) {
+                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
+                }else if(i==5){
+                    String message = sharedPreferences.getString(getResources().getString(R.string.message_pref_default), "");
+                    setPreferenceSummary(p, getResources().getString(R.string.message_pref_default));
+                }
+
+
+                try{
+                    person = gson.fromJson(json, Person.class);
+                  //  Log.d("value_","class" + gson.fromJson(json, Person.class).getClass());
+
+                    try{
+                        String value = person.getPhoneNumber();
+                        setPreferenceSummary(p, value);
+
+                        if(i==0) {
+                            p.setTitle(person.getName());
+                        }else if(i==1) {
+                            p.setTitle(person.getName());
+                        }else if(i==2) {
+                            p.setTitle(person.getName());
+                        }else if(i==3) {
+                            p.setTitle(person.getName());
+                        }else if(i==4) {
+                            p.setTitle(person.getName());
+                        }else if(i==5) {
+                            p.setTitle(person.getName());
+                        }
+
+                    }catch (NullPointerException e){
+
+                        String mes = e.getLocalizedMessage();
+                        Log.d("","" + mes);
+
+                    }
+
+                }catch (IllegalStateException | JsonSyntaxException e){
+
+                    String mes = e.getLocalizedMessage();
+                    Log.d("","" + mes);
+
+
+                }
+
+
             }
 
 
@@ -109,8 +153,29 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         preference3.setOnPreferenceChangeListener(this);
         Preference preference4 = findPreference(getResources().getString(R.string.number4_pref));
         preference4.setOnPreferenceChangeListener(this);
-        Preference preference5 = findPreference(getResources().getString(R.string.message_pref));
+        Preference preference5 = findPreference(getResources().getString(R.string.number5_pref));
         preference5.setOnPreferenceChangeListener(this);
+        Preference preference6 = findPreference(getResources().getString(R.string.message_pref));
+        preference6.setOnPreferenceChangeListener(this);
+        Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.border);
+        try {
+            getListView().setBackground(drawable);
+        }catch (NullPointerException e){
+
+        }
+    }
+
+
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        view.setBackgroundColor(getResources().getColor(R.color.colorPreferenceScreenBackground));
+       // container.getChildAt(0);
+     //   Log.d("PRÄÄT","PRÄÄT" + view.getRootView().set);
+
+        return view;
     }
 
 
@@ -122,13 +187,20 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
         // Figure out which preference was changed
         Preference preference = findPreference(key);
-        preference.getSummary();
+       // preference.getSummary();
         if (null != preference) {
             // Updates the summary for the preference
             if (!(preference instanceof CheckBoxPreference)) {
-                String value = sharedPreferences.getString(preference.getKey(), "");
+
+                Gson gson = new Gson();
+                String json = sharedPreferences.getString(preference.getKey(), "");
+               final Person obj = gson.fromJson(json, Person.class);
+                String value = obj.getPhoneNumber();
+                String title = obj.getName();
+                preference.setTitle(title);
                 Log.d("onSharedPreferenceChang","preference value:: "+value);
                 setPreferenceSummary(preference, value);
+
             }
         }
     }
@@ -246,6 +318,20 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
             }
         });
 
+        Preference preference5 =  findPreference(getResources().getString(R.string.number5_pref));
+
+        preference5.setOnPreferenceClickListener( new Preference.OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick( Preference pref )
+            {
+                // Run your custom method
+                Log.d("PRÖ ", "");
+                callContacts(pref);
+
+                return true;
+            }
+        });
+
 
         getPreferenceScreen().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener(this);
@@ -303,7 +389,13 @@ getActivity().getIntent();
                     if(!(preference instanceof EditTextPreference)) {
                         SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(mActivePreference_key, number);
+                        //editor.putString(mActivePreference_key, number);
+                        Gson gson = new Gson();
+                       final Person person = new Person(name, number);
+                        mPerson = person;
+                        String json = gson.toJson(person);
+                        editor.putString(mActivePreference_key, json);
+                       // prefsEditor.putString("MyObject", json);
                         editor.commit();
 
                         String s = (String) preference.getSummary();
