@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private static final int TWO_MINUTES = 1000 * 60 * 2;
     private Context context;
-    private Button haePaikkaButton;
-    private Button lopetaButton;
+    private Button sendSMSButton;
+    private Button settingsButton;
 
 
     private boolean onOff;
@@ -65,51 +65,44 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
 
-        locationTextView        = findViewById(R.id.textView);
-        accuracyTextView        = findViewById(R.id.textView2);
-        timeTextView            = findViewById(R.id.textView3);
-        locationTypeTextView    = findViewById(R.id.textView4);
-        haePaikkaButton         = findViewById(R.id.button);
-        lopetaButton            = findViewById(R.id.button2);
 
+        locationTextView          = findViewById(R.id.textView);
+        accuracyTextView          = findViewById(R.id.textView2);
+        timeTextView              = findViewById(R.id.textView3);
+        locationTypeTextView      = findViewById(R.id.textView4);
+        sendSMSButton             = findViewById(R.id.button);
+        settingsButton            = findViewById(R.id.button2);
 
+        setupSharedPreferences();
 
-        haePaikkaButton.setOnClickListener(new View.OnClickListener()
+        sendSMSButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                onOff=true;
-                aloita();
-                haePaikkaButton.setVisibility(View.INVISIBLE);
-                lopetaButton.setVisibility(View.VISIBLE);
+            sendSMS("","");
+
             }
         });
 
-        lopetaButton.setOnClickListener(new View.OnClickListener()
+        settingsButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                onOff=false;
-                lopeta();
-                haePaikkaButton.setVisibility(View.VISIBLE);
-                lopetaButton.setVisibility(View.INVISIBLE);
-            }
-        });
-/*
-        showOnMapButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-              //  naytaKartalla();
+
+                Intent startSettingsActivity = new Intent(context, SettingsActivity.class);
+                startActivity(startSettingsActivity);
+
             }
         });
 
-        */
+
 
         if (savedInstanceState != null && savedInstanceState.getParcelable(LOCATION_EXTRA)!=null) {
+
+            sendSMSButton.setVisibility(View.VISIBLE);
+            settingsButton.setVisibility(View.INVISIBLE);
             mLocation = savedInstanceState.getParcelable(LOCATION_EXTRA);
             onOff = savedInstanceState.getBoolean(ONOFF_EXTRA);
             Log.d("JEE ","" + onOff);
@@ -120,34 +113,16 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             String formattedTime = format.format(date);
             timeTextView.setText("Paikannusaika: " + formattedTime);
             locationTypeTextView.setText("Paikannustyyppi: " + mLocation.getProvider());
-           // showOnMapButton.setVisibility(View.VISIBLE);
+
 
          }else if(savedInstanceState != null){
+            sendSMSButton.setVisibility(View.INVISIBLE);
+            settingsButton.setVisibility(View.VISIBLE);
             Log.d("JEE ","" + onOff);
             onOff = savedInstanceState.getBoolean(ONOFF_EXTRA);
-           // showOnMapButton.setVisibility(View.INVISIBLE);
-        }
-
-        Intent intentThatStartedThisActivity = getIntent();
-
-        if(intentThatStartedThisActivity.hasExtra(Intent.EXTRA_TEXT)){
-
-            //mLocation =  intentThatStartedThisActivity.getParcelableExtra(Intent.EXTRA_TEXT);
-
-            mLocation =  intentThatStartedThisActivity.getParcelableExtra(Intent.EXTRA_TEXT);
-            Log.d("MainActivity","Prööt! " + mLocation.getLongitude());
-           // onOff = savedInstanceState.getBoolean(ONOFF_EXTRA);
-            Log.d("JEE ","" + onOff);
-            locationTextView.setText("Latitudi: " + mLocation.getLatitude() + ", Longitudi: " + mLocation.getLongitude());
-            accuracyTextView.setText("Paikannuksen tarkkuus: " + mLocation.getAccuracy());
-            DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            Date date = new Date(mLocation.getTime());
-            String formattedTime = format.format(date);
-            timeTextView.setText("Paikannusaika: " + formattedTime);
-            locationTypeTextView.setText("Paikannustyyppi: " + mLocation.getProvider());
-           // showOnMapButton.setVisibility(View.VISIBLE);
 
         }
+
 
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -167,7 +142,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     String formattedTime = format.format(date);
                     timeTextView.setText("Paikannusaika: " + formattedTime);
                     locationTypeTextView.setText("Paikannustyyppi: " + mLocation.getProvider());
-                    //showOnMapButton.setVisibility(View.VISIBLE);
+                    sendSMSButton.setVisibility(View.VISIBLE);
+                    settingsButton.setVisibility(View.INVISIBLE);
 
 
                 }
@@ -190,54 +166,111 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
             }
         };
-
+/*
         if(onOff){
-            haePaikkaButton.setVisibility(View.INVISIBLE);
-            lopetaButton.setVisibility(View.VISIBLE);
+            sendSMSButton.setVisibility(View.INVISIBLE);
+            settingsButton.setVisibility(View.VISIBLE);
             aloita();
         }else{
 
-            haePaikkaButton.setVisibility(View.VISIBLE);
-            lopetaButton.setVisibility(View.INVISIBLE);
+            sendSMSButton.setVisibility(View.VISIBLE);
+            settingsButton.setVisibility(View.INVISIBLE);
             lopeta();
 
         }
 
-
-        setupSharedPreferences();
+*/
+        aloita();
 
     }
-
 
     private void setupSharedPreferences() {
         // Get all of the values from shared preferences to set it up
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mPhoneNumbers = new ArrayList<>();
 
 
 
-try {
-    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number1_pref),
-            getResources().getString(R.string.number1_pref_default))));
+        try {
 
-    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number2_pref),
-            getResources().getString(R.string.number2_pref_default))));
+        int number1 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number1_pref),
+            "0"));
+        mPhoneNumbers.add(number1);
+        }catch(NumberFormatException e){
+        Log.d("","" + e.getLocalizedMessage());
+        }
 
-    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number3_pref),
-            getResources().getString(R.string.number3_pref_default))));
+        try {
 
-    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number4_pref),
-            getResources().getString(R.string.number4_pref_default))));
+        int number2 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number2_pref),
+            "0"));
+        mPhoneNumbers.add(number2);
+        }catch(NumberFormatException e){
+        Log.d("","" + e.getLocalizedMessage());
+        }
 
-    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number5_pref),
-            getResources().getString(R.string.number5_pref_default))));
+        try {
 
+        int number3 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number3_pref),
+            "0"));
+        mPhoneNumbers.add(number3);
+        }catch(NumberFormatException e){
+        Log.d("","" + e.getLocalizedMessage());
+        }
+
+        try {
+
+        int number4 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number4_pref),
+           "0"));
+            mPhoneNumbers.add(number4);
+        }catch(NumberFormatException e){
+        Log.d("","" + e.getLocalizedMessage());
+        }
+
+        try {
+
+        int number5 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number5_pref),
+           "0"));
+            mPhoneNumbers.add(number5);
+        }catch(NumberFormatException e){
+            Log.d("","" + e.getLocalizedMessage());
+        }
+
+
+
+
+
+
+
+
+
+
+    Log.d("Prööt","");
+    for(int i=0;i<mPhoneNumbers.size();i++){
+
+        Log.d("number_ ", + i+1 + " " + mPhoneNumbers.get(i) );
+    }
+
+
+    /*
+  int number1 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number1_pref),"0"));
+    Log.d("number1"," " + number1);
+
+    mPhoneNumbers.add(number1);
+
+    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number2_pref),"0")));
+
+    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number3_pref),"0")));
+
+    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number4_pref), "0")));
+
+    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number5_pref), "0")));
+*/
 
     mMessage = sharedPreferences.getString(getString(R.string.message_pref),
             getResources().getString(R.string.message_pref_default));
 
-}catch (NumberFormatException e){
-    Log.d("setUpSharedPreferences"," " + e.getLocalizedMessage());
-}
+
 
 
 
@@ -250,6 +283,8 @@ try {
 
 
     public void sendSMS(String phoneNo, String msg) {
+
+        /*
         try {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNo, null, msg, null, null);
@@ -260,6 +295,10 @@ try {
                     Toast.LENGTH_LONG).show();
             ex.printStackTrace();
         }
+
+        */
+
+        Log.d("sendSMS"," method called");
     }
 
 
@@ -451,33 +490,6 @@ try {
 
     }
 
-/*
-    public void naytaKartalla(){
-
-        Context context = MainActivity.this;
-
-        /* This is the class that we want to start (and open) when the button is clicked.
-        Class destinationActivity = MapsActivity.class;
-
-        /*
-         * Here, we create the Intent that will start the Activity we specified above in
-         * the destinationActivity variable. The constructor for an Intent also requires a
-         * context, which we stored in the variable named "context".
-
-        Intent startChildActivityIntent = new Intent(context, destinationActivity);
-
-
-
-        startChildActivityIntent.putExtra(Intent.EXTRA_TEXT,mLocation);
-        startChildActivityIntent.putExtra(Intent.EXTRA_COMPONENT_NAME,onOff);
-        /*
-         * Once the Intent has been created, we can use Activity's method, "startActivity"
-         * to start the ChildActivity.
-
-        startActivity(startChildActivityIntent);
-
-    }
-*/
 
 
 
@@ -522,6 +534,6 @@ try {
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
+        setupSharedPreferences();
     }
 }

@@ -2,19 +2,46 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
+
+
+    <Preference
+        android:key="@string/number1_pref"
+        android:defaultValue="@string/number1_pref_default"
+        android:title="Prööt"
+        android:summary="Prööt"
+        android:icon="@mipmap/ic_contacts"
         />
 
-    <CheckBoxPreference
+    <Preference
+        android:key="@string/number2_pref"
+        android:defaultValue="@string/number2_pref_default"
+        android:summary="Prööt"
+        android:title="Prööt"
+        android:icon="@mipmap/ic_contacts"
        />
 
-    <CheckBoxPreference
+    <Preference
+        android:key="@string/number3_pref"
+        android:defaultValue="@string/number3_pref_default"
+        android:summary="Prööt"
+        android:title="Prööt"
+        android:icon="@mipmap/ic_contacts"
         />
+
+    <Preference
+        android:key="@string/number4_pref"
+        android:defaultValue="@string/number4_pref_default"
+        android:summary="Prööt"
+        android:title="Prööt"
+        android:icon="@mipmap/ic_contacts"
+
+        />
+
 
     <EditTextPreference
-        />
 
-    <ListPreference
+        android:key="@string/message_pref"
+        android:defaultValue="@string/message_pref_default"
        />
 
 </PreferenceScreen>
