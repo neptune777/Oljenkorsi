@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="fontSize">18sp</dimen>
+    <dimen name="fontSize">22sp</dimen>
     <dimen name="fontSizeResultField">12sp</dimen>
     <dimen name="calcElementHeight">30dp</dimen>
     <dimen name="actionButtonHeight">25dp</dimen>

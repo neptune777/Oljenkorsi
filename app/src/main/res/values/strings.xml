@@ -11,7 +11,9 @@
     <string name="action_settings">Settings</string>
     <string name="location_not_ready">Paikannustietoja ei ole vielä saatavilla.</string>
     <string name="message_pref_default">Apua, hätätilanne! Sijaintini näkyy koordinaateista.</string>
+    <string name="message_pref_title">Lähetettävä viesti</string>
     <string name="message_pref">message_pref</string>
+    <string name="preference_key">preference_key</string>
     <string name="number1_pref">number_1</string>
     <string name="number2_pref">number_2</string>
     <string name="number3_pref">number_3</string>

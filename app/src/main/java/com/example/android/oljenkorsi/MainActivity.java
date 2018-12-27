@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             @Override
             public void onClick(View v)
             {
-            sendSMS("","");
+            sendSMS("045 1562740","Test message");
 
             }
         });
@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     public void sendSMS(String phoneNo, String msg) {
 
-        /*
+
         try {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNo, null, msg, null, null);
@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             ex.printStackTrace();
         }
 
-        */
+
 
         Log.d("sendSMS"," method called");
     }
@@ -536,4 +536,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         setupSharedPreferences();
     }
+
+
+    
+
+
 }

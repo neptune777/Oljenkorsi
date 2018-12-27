@@ -16,6 +16,7 @@ package com.example.android.oljenkorsi;
  * limitations under the License.
  */
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -75,10 +76,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
 
 
-
-            if (!(p instanceof CheckBoxPreference)) {
-
-
                 Gson gson = new Gson();
                 String json = sharedPreferences.getString(p.getKey(), "");
              //  gson.fromJson(json, Person.class).getClass();
@@ -94,11 +91,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                     setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
                 }else if(i==4) {
                     setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
-                }else if(i==5){
-                    String message = sharedPreferences.getString(getResources().getString(R.string.message_pref_default), "");
-                    setPreferenceSummary(p, getResources().getString(R.string.message_pref_default));
-                }
+                }else if(i==7) {
+                    //setPreferenceSummary(p, getResources().getString(R.string.message_pref_default));
+                    setPreferenceSummary(p, json);
 
+                }
 
                 try{
                     person = gson.fromJson(json, Person.class);
@@ -117,8 +114,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                         }else if(i==3) {
                             p.setTitle(person.getName());
                         }else if(i==4) {
-                            p.setTitle(person.getName());
-                        }else if(i==5) {
                             p.setTitle(person.getName());
                         }
 
@@ -142,7 +137,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
 
 
-        }
+
         // TODO (3) Add the OnPreferenceChangeListener specifically to the EditTextPreference
        // String preferenceName = getResources().getString(R.string.number1_pref);
         Preference preference1 = findPreference(getResources().getString(R.string.number1_pref));
@@ -157,13 +152,15 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         preference5.setOnPreferenceChangeListener(this);
         Preference preference6 = findPreference(getResources().getString(R.string.message_pref));
         preference6.setOnPreferenceChangeListener(this);
-        Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.border);
-        try {
-            getListView().setBackground(drawable);
-        }catch (NullPointerException e){
 
-        }
+
+
+
+
     }
+
+
+
 
 
 
@@ -172,6 +169,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         view.setBackgroundColor(getResources().getColor(R.color.colorPreferenceScreenBackground));
+
+
        // container.getChildAt(0);
      //   Log.d("PRÄÄT","PRÄÄT" + view.getRootView().set);
 
@@ -190,7 +189,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
        // preference.getSummary();
         if (null != preference) {
             // Updates the summary for the preference
-            if (!(preference instanceof CheckBoxPreference)) {
+            if (!(preference instanceof EditTextPreference)) {
 
                 Gson gson = new Gson();
                 String json = sharedPreferences.getString(preference.getKey(), "");
@@ -198,8 +197,15 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                 String value = obj.getPhoneNumber();
                 String title = obj.getName();
                 preference.setTitle(title);
-                Log.d("onSharedPreferenceChang","preference value:: "+value);
+
                 setPreferenceSummary(preference, value);
+                Log.d("onSharedPreferenceChang","EEE_ Preference "+value);
+
+            }else if(preference instanceof EditTextPreference){
+
+                String value = sharedPreferences.getString(preference.getKey(), "");
+                setPreferenceSummary(preference, value);
+                Log.d("onSharedPreferenceChang","EEE_ EditTextPreference "+value);
 
             }
         }
@@ -212,37 +218,34 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
      * @param value      The value that the preference was updated to
      */
     private void setPreferenceSummary(Preference preference, String value) {
-        if (preference instanceof ListPreference) {
-            // For list preferences, figure out the label of the selected value
-            ListPreference listPreference = (ListPreference) preference;
-            int prefIndex = listPreference.findIndexOfValue(value);
-            if (prefIndex >= 0) {
-                // Set the summary to that label
-                listPreference.setSummary(listPreference.getEntries()[prefIndex]);
-            }
-        } else if (preference instanceof Preference) {
-            // For EditTextPreferences, set the summary to the value's simple string representation.
+
+        if (!(preference instanceof EditTextPreference)) {
+            Log.d("setPreferenceSummary","setPreferenceSummary 1" + preference.getKey());
             preference.setSummary(value);
+
+
+
+        } else  {
+            Log.d("setPreferenceSummary","setPreferenceSummary 2" + value);
+
+            preference.setSummary(value);
+
         }
     }
 
-    // TODO (2) Override onPreferenceChange. This method should try to convert the new preference value
-    // to a float; if it cannot, show a helpful error message and return false. If it can be converted
-    // to a float check that that float is between 0 (exclusive) and 3 (inclusive). If it isn't, show
-    // an error message and return false. If it is a valid number, return true.
+
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         Toast error = Toast.makeText(getContext(), "Please select a number between 0.1 and 3", Toast.LENGTH_SHORT);
 
-        String number = (String) newValue;
-        //int val = Integer.parseInt(number.trim());
-
-        Log.d("onPreferenceChange","onPreferenceChange ");
 
 
-            String stringSize = (String) newValue;
+        Log.d("onPreferenceChange","onPreferenceChange " +newValue);
+
+
+
             try {
-                float size = Float.parseFloat(stringSize);
+                int size = ((String) newValue).length();
                 if (size <= 0) {
 
                     error.show();
@@ -252,6 +255,21 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                 error.show();
                 return false;
             }
+
+
+        if(preference instanceof EditTextPreference){
+            Log.d("PREET","PREET " + newValue);
+
+            SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            editor.putString(getResources().getString(R.string.message_pref), (String) newValue);
+
+            editor.commit();
+
+            return true;
+
+        }
 
 
         return true;
@@ -330,6 +348,21 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
                 return true;
             }
+        }); Preference preference6 =  findPreference(getResources().getString(R.string.preference_key));
+
+        preference6.setOnPreferenceClickListener( new Preference.OnPreferenceClickListener()
+        {
+            @SuppressLint("RestrictedApi")
+            public boolean onPreferenceClick(Preference pref )
+            {
+                // Run your custom method
+
+                Preference preference =  findPreference(getResources().getString(R.string.message_pref));
+                preference.performClick();
+
+
+                return true;
+            }
         });
 
 
@@ -368,7 +401,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                 Uri contactData = data.getData();
                 Cursor c = getActivity().getContentResolver().query(contactData, null, null, null, null);
                 Log.d("Claaaas", "CLAAAAS " +getActivity());
-getActivity().getIntent();
+
 
                 if(c.moveToFirst()){
                     String name   = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
@@ -401,15 +434,6 @@ getActivity().getIntent();
                         String s = (String) preference.getSummary();
                         Log.d("SUMMARY","SUMMARY " +s);
 
-                    }else {
-
-                    EditTextPreference editTextPref = (EditTextPreference) findPreference(mActivePreference_key);
-                    editTextPref.setText(number);
-                    /*
-                    editTextPref.setDefaultValue(editTextPref.getText());
-                    editTextPref.setDialogTitle(editTextPref.getText());
-                    editTextPref.setDialogMessage(editTextPref.getText());
-                    */
                     }
 
 
