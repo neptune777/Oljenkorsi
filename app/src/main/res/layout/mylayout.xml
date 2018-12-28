@@ -9,7 +9,9 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/fontSize"
         android:focusable="false"
+        
         android:background="@null"
+
 
         />
 

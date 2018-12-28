@@ -5,9 +5,20 @@
 
     >
 
+    <Preference
+
+        android:title="@string/reset_pref_title"
+        android:icon="@mipmap/icons8_reset_48"
+        android:key="@string/reset_pref"
+        />
 
     <Preference
-        android:background="@drawable/back"
+        android:layout="@layout/custom_layout"
+        />
+
+
+    <Preference
+
         android:defaultValue="@string/number1_pref_default"
         android:icon="@mipmap/ic_contacts"
         android:key="@string/number1_pref"

@@ -56,6 +56,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     private Preference num1;
     private String mActivePreference_key;
     Person mPerson;
+    boolean setDefaultsCalled;
+    Intent mStarterIntent;
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
@@ -81,17 +83,15 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
              //  gson.fromJson(json, Person.class).getClass();
                 Person person;
 
-                if(i==0) {
-                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
-                }else if(i==1) {
-                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
-                }else if(i==2) {
-                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
-                }else if(i==3) {
+                if(i==3) {
                     setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
                 }else if(i==4) {
                     setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
-                }else if(i==7) {
+                }else if(i==5) {
+                     setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
+                }else if(i==6) {
+                     setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
+                }else if(i==9) {
                     //setPreferenceSummary(p, getResources().getString(R.string.message_pref_default));
                     setPreferenceSummary(p, json);
 
@@ -105,15 +105,15 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                         String value = person.getPhoneNumber();
                         setPreferenceSummary(p, value);
 
-                        if(i==0) {
-                            p.setTitle(person.getName());
-                        }else if(i==1) {
-                            p.setTitle(person.getName());
-                        }else if(i==2) {
+                        if(i==2) {
                             p.setTitle(person.getName());
                         }else if(i==3) {
                             p.setTitle(person.getName());
                         }else if(i==4) {
+                            p.setTitle(person.getName());
+                        }else if(i==5) {
+                            p.setTitle(person.getName());
+                        }else if(i==6) {
                             p.setTitle(person.getName());
                         }
 
@@ -182,32 +182,34 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
 
+        if (!setDefaultsCalled) {
+            // Figure out which preference was changed
+            Preference preference = findPreference(key);
+            // preference.getSummary();
+            if (null != preference) {
+                // Updates the summary for the preference
+                if (!(preference instanceof EditTextPreference)) {
 
-        // Figure out which preference was changed
-        Preference preference = findPreference(key);
-       // preference.getSummary();
-        if (null != preference) {
-            // Updates the summary for the preference
-            if (!(preference instanceof EditTextPreference)) {
+                    Gson gson = new Gson();
+                    String json = sharedPreferences.getString(preference.getKey(), "");
+                    final Person obj = gson.fromJson(json, Person.class);
+                    String value = obj.getPhoneNumber();
+                    String title = obj.getName();
+                    preference.setTitle(title);
 
-                Gson gson = new Gson();
-                String json = sharedPreferences.getString(preference.getKey(), "");
-               final Person obj = gson.fromJson(json, Person.class);
-                String value = obj.getPhoneNumber();
-                String title = obj.getName();
-                preference.setTitle(title);
+                    setPreferenceSummary(preference, value);
+                    Log.d("onSharedPreferenceChang", "EEE_ Preference " + value);
 
-                setPreferenceSummary(preference, value);
-                Log.d("onSharedPreferenceChang","EEE_ Preference "+value);
+                } else if (preference instanceof EditTextPreference) {
 
-            }else if(preference instanceof EditTextPreference){
+                    String value = sharedPreferences.getString(preference.getKey(), "");
+                    setPreferenceSummary(preference, value);
+                    Log.d("onSharedPreferenceChang", "EEE_ EditTextPreference " + value);
 
-                String value = sharedPreferences.getString(preference.getKey(), "");
-                setPreferenceSummary(preference, value);
-                Log.d("onSharedPreferenceChang","EEE_ EditTextPreference "+value);
-
+                }
             }
         }
+
     }
 
     /**
@@ -278,6 +280,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //CharSequence charSequence = "" + R.string.number1_pref;
+        mStarterIntent = getActivity().getIntent();
 
         Preference preference1 =  findPreference(getResources().getString(R.string.number1_pref));
 
@@ -347,7 +350,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
                 return true;
             }
-        }); Preference preference6 =  findPreference(getResources().getString(R.string.preference_key));
+        });
+
+        Preference preference6 =  findPreference(getResources().getString(R.string.preference_key));
 
         preference6.setOnPreferenceClickListener( new Preference.OnPreferenceClickListener()
         {
@@ -365,8 +370,55 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         });
 
 
+        Preference preference7 =  findPreference(getResources().getString(R.string.reset_pref));
+
+        preference7.setOnPreferenceClickListener( new Preference.OnPreferenceClickListener()
+        {
+            @SuppressLint("RestrictedApi")
+            public boolean onPreferenceClick(Preference pref )
+            {
+                // Run your custom method
+
+                Preference preference =  findPreference(getResources().getString(R.string.message_pref));
+                Log.d("preference7 ", "preference7");
+                setDefaults();
+
+
+                return true;
+            }
+        });
+
+
         getPreferenceScreen().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener(this);
+    }
+
+
+
+    protected void setDefaults(){
+        setDefaultsCalled=true;
+        SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.remove(getResources().getString(R.string.number1_pref));
+        editor.remove(getResources().getString(R.string.number2_pref));
+        editor.remove(getResources().getString(R.string.number3_pref));
+        editor.remove(getResources().getString(R.string.number4_pref));
+        editor.remove(getResources().getString(R.string.number5_pref));
+        editor.remove(getResources().getString(R.string.message_pref));
+        editor.commit();
+
+        getActivity().finish();
+        startActivity(mStarterIntent);
+
+
+
+
+
+
+
+        // prefsEditor.putString("MyObject", json);
+
     }
 
     @Override
