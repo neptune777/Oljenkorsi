@@ -171,8 +171,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         view.setBackgroundColor(getResources().getColor(R.color.colorPreferenceScreenBackground));
 
 
-       // container.getChildAt(0);
-     //   Log.d("PRÄÄT","PRÄÄT" + view.getRootView().set);
+
 
         return view;
     }

@@ -2,12 +2,14 @@ package com.example.android.oljenkorsi;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -25,10 +27,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+import static android.Manifest.permission.SEND_SMS;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -36,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private LocationListener mLocationListener;
     private Location mLocation;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 98;
+    public static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 99;
+    public static final int REQUEST_SMS = 0;
     private TextView locationTextView;
     private TextView accuracyTextView;
     private TextView timeTextView;
@@ -52,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private static final String LOCATION_EXTRA = "query";
     private static final String ONOFF_EXTRA = "onoff";
     private static final String LOCATIONUPDATES_EXTRA = "locUpdates";
-    private ArrayList<Integer> mPhoneNumbers;
+    private ArrayList<String> mPhoneNumbers;
     private String mMessage;
 
     @Override
@@ -186,13 +195,59 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void setupSharedPreferences() {
         // Get all of the values from shared preferences to set it up
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+      //  SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPhoneNumbers = new ArrayList<>();
+        //SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String num1= sharedPreferences.getString(getResources().getString(R.string.number1_pref),
+        getResources().getString(R.string.number1_pref_default));
 
 
 
+        Log.d("setupSharedPreferences_","setupSharedPreferences_ " + num1);
+
+
+        String json1 = sharedPreferences.getString(getResources().getString(R.string.number1_pref),
+                "0");
+        String json2 = sharedPreferences.getString(getResources().getString(R.string.number2_pref),
+                "0");
+        String json3 = sharedPreferences.getString(getResources().getString(R.string.number3_pref),
+                "0");
+        String json4 = sharedPreferences.getString(getResources().getString(R.string.number4_pref),
+                "0");
+        String json5 = sharedPreferences.getString(getResources().getString(R.string.number5_pref),
+                "0");
+        //  gson.fromJson(json, Person.class).getClass();
+
+        if(json1!="0" && !mPhoneNumbers.contains(getNumberFromObject(json1))){
+            mPhoneNumbers.add(getNumberFromObject(json1));
+        }if(json2!="0" && !mPhoneNumbers.contains(getNumberFromObject(json2))){
+            mPhoneNumbers.add(getNumberFromObject(json2));
+        }if(json3!="0" && !mPhoneNumbers.contains(getNumberFromObject(json3))){
+            mPhoneNumbers.add(getNumberFromObject(json3));
+        }if(json4!="0" && !mPhoneNumbers.contains(getNumberFromObject(json4))){
+            mPhoneNumbers.add(getNumberFromObject(json4));
+        }if(json5!="0" && !mPhoneNumbers.contains(getNumberFromObject(json5))){
+            mPhoneNumbers.add(getNumberFromObject(json5));
+        }
+
+        for(int i=0;i<mPhoneNumbers.size();i++){
+
+            Log.d("setupSharedPreferences","JSONS " + "i=" + i + " " + mPhoneNumbers.get(i) );
+        }
+
+
+
+
+
+
+
+
+
+/*
         try {
-
+        Person person =
         int number1 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number1_pref),
             "0"));
         mPhoneNumbers.add(number1);
@@ -237,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
 
 
+*/
 
 
 
@@ -245,7 +301,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
 
-    Log.d("Prööt","");
     for(int i=0;i<mPhoneNumbers.size();i++){
 
         Log.d("number_ ", + i+1 + " " + mPhoneNumbers.get(i) );
@@ -271,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             getResources().getString(R.string.message_pref_default));
 
 
-
+        Log.d("onCreate_","onCreate_ " + mMessage);
 
 
 
@@ -281,11 +336,52 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
+    protected String getNumberFromObject(String json){
+
+
+        try {
+
+            Gson gson = new Gson();
+            Person person;
+            person = gson.fromJson(json, Person.class);
+
+            //  Log.d("value_","class" + gson.fromJson(json, Person.class).getClass());
+            try {
+                String value = person.getPhoneNumber();
+                return value;
+
+
+            } catch (NullPointerException e) {
+
+                String mes = e.getLocalizedMessage();
+                Log.d("", "" + mes);
+                return null;
+            }
+        } catch (IllegalStateException | JsonSyntaxException e) {
+
+            String mes = e.getLocalizedMessage();
+            Log.d("", "" + mes);
+
+            return null;
+        }
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.d("onResume","onResume_");
+        setupSharedPreferences();
+    }
+
 
     public void sendSMS(String phoneNo, String msg) {
 
 
         try {
+            kysyLupaa2(context);
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNo, null, msg, null, null);
             Toast.makeText(getApplicationContext(), "Message Sent",
@@ -380,6 +476,45 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     }
 
+    public boolean kysyLupaa2(final Context context){
+        Log.d("lokasofta", "kysyLupaa2()");
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            Log.d("lokasofta", " Permission is not granted");
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.SEND_SMS)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Log.d("lokasofta", "Kerran kysytty, mutta ei lupaa... Nyt ei kysytä uudestaan");
+
+            } else {
+                Log.d("lokasofta", " Request the permission");
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.SEND_SMS},
+                        MY_PERMISSIONS_REQUEST_SEND_SMS);
+
+                // MY_PERMISSIONS_REQUEST_READ_LOCATION is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+
+            }
+            return false;
+        } else {
+
+            Log.d("lokasofta", "Permission has already been granted");
+            return true;
+        }
+
+    }
+
+
 
     @Override
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
@@ -429,9 +564,41 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     Log.d("lokasofta", "Ei tullu lupaa!");
                 }
                 return;
-            }
+            }case REQUEST_SMS:
+                if (grantResults.length > 0 &&  grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(getApplicationContext(), "Permission Granted, Now you can access sms", Toast.LENGTH_SHORT).show();
+                    sendSMS("045 1562740","Test message");
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "Permission Denied, You cannot access and sms", Toast.LENGTH_SHORT).show();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (shouldShowRequestPermissionRationale(SEND_SMS)) {
+                            showMessageOKCancel("You need to allow access to both the permissions",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                requestPermissions(new String[]{SEND_SMS},
+                                                        REQUEST_SMS);
+                                            }
+                                        }
+                                    });
+                            return;
+                        }
+                    }
+                }
+                break;
 
         }
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new android.support.v7.app.AlertDialog.Builder(MainActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     }
 
     /** Determines whether one Location reading is better than the current Location fix
@@ -538,7 +705,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
 
-    
+
 
 
 }
