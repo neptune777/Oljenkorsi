@@ -49,8 +49,9 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/buttonDim"
+        android:layout_height="@dimen/buttonDim"
+        android:background="@drawable/button_help"
         android:layout_marginTop="@dimen/textViewVerticalMargin"
         android:layout_marginEnd="@dimen/textViewHorizontalMargin"
         android:layout_marginRight="@dimen/textViewHorizontalMargin"
@@ -61,8 +62,9 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/buttonDim"
+        android:layout_height="@dimen/buttonDim"
+        android:background="@drawable/button_settings"
         android:layout_marginTop="@dimen/textViewVerticalMargin"
         android:layout_marginEnd="@dimen/textViewHorizontalMargin"
         android:layout_marginRight="@dimen/textViewHorizontalMargin"
@@ -76,7 +78,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/textViewVerticalMargin"
-        android:text="@string/lokaatioTypeTextView"
+        android:text="@string/locationNotReady"
         android:textSize="@dimen/fontSize"
         app:layout_constraintEnd_toEndOf="@+id/textView3"
         app:layout_constraintStart_toStartOf="@+id/textView3"

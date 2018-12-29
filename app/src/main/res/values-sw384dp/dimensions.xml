@@ -13,4 +13,7 @@
     <dimen name="calcElementWidth">30dp</dimen>
     <dimen name="CalcButtonWidth">40dp</dimen>
     <dimen name="notCalcButtonWidth">45dp</dimen>
+
+    <dimen name="buttonDim">275dp</dimen>
+    <dimen name="buttonDimBack">30dp</dimen>
 </resources>

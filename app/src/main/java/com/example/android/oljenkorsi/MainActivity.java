@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private TextView locationTextView;
     private TextView accuracyTextView;
     private TextView timeTextView;
-    private TextView locationTypeTextView;
+    private TextView mInfoTextView;
 
     private static final int TWO_MINUTES = 1000 * 60 * 2;
     private Context context;
@@ -71,16 +71,19 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         context=this;
 
+        kysyLupaa(context);
+        kysyLupaa2(context);
 
 
 
 
-        locationTextView          = findViewById(R.id.textView);
-        accuracyTextView          = findViewById(R.id.textView2);
-        timeTextView              = findViewById(R.id.textView3);
-        locationTypeTextView      = findViewById(R.id.textView4);
-        sendSMSButton             = findViewById(R.id.button);
-        settingsButton            = findViewById(R.id.button2);
+
+        locationTextView              = findViewById(R.id.textView);
+        accuracyTextView              = findViewById(R.id.textView2);
+        timeTextView                  = findViewById(R.id.textView3);
+        mInfoTextView                 = findViewById(R.id.textView4);
+        sendSMSButton                 = findViewById(R.id.button);
+        settingsButton                = findViewById(R.id.button2);
 
         setupSharedPreferences();
 
@@ -110,8 +113,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         if (savedInstanceState != null && savedInstanceState.getParcelable(LOCATION_EXTRA)!=null) {
 
-            sendSMSButton.setVisibility(View.VISIBLE);
-            settingsButton.setVisibility(View.INVISIBLE);
+            setButtonsVisibility();
             mLocation = savedInstanceState.getParcelable(LOCATION_EXTRA);
             onOff = savedInstanceState.getBoolean(ONOFF_EXTRA);
             Log.d("JEE ","" + onOff);
@@ -121,14 +123,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             Date date = new Date(mLocation.getTime());
             String formattedTime = format.format(date);
             timeTextView.setText("Paikannusaika: " + formattedTime);
-            locationTypeTextView.setText("Paikannustyyppi: " + mLocation.getProvider());
+            setInfo();
+            //locationNotReadyTextView.setText("Paikannustyyppi: " + mLocation.getProvider());
 
 
          }else if(savedInstanceState != null){
-            sendSMSButton.setVisibility(View.INVISIBLE);
-            settingsButton.setVisibility(View.VISIBLE);
+            setButtonsVisibility();
             Log.d("JEE ","" + onOff);
             onOff = savedInstanceState.getBoolean(ONOFF_EXTRA);
+            setInfo();
 
         }
 
@@ -150,9 +153,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     Date date = new Date(mLocation.getTime());
                     String formattedTime = format.format(date);
                     timeTextView.setText("Paikannusaika: " + formattedTime);
-                    locationTypeTextView.setText("Paikannustyyppi: " + mLocation.getProvider());
-                    sendSMSButton.setVisibility(View.VISIBLE);
-                    settingsButton.setVisibility(View.INVISIBLE);
+                    //locationTypeTextView.setText("Paikannustyyppi: " + mLocation.getProvider());
+                    setButtonsVisibility();
+                    setInfo();
 
 
                 }
@@ -189,7 +192,42 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
 
 */
+
+        setInfo();
         aloita();
+
+    }
+
+    private void setInfo(){
+
+        if((mLocation==null || mLocation!=null) && mPhoneNumbers.size()==0){
+            mInfoTextView.setText(getString(R.string.phoneNumbersMissing));
+            mInfoTextView.setVisibility(View.VISIBLE);
+        }
+
+        if(mLocation==null && mPhoneNumbers.size()>0){
+            mInfoTextView.setText(getString(R.string.locationNotReady));
+            mInfoTextView.setVisibility(View.VISIBLE);
+        }
+        if(mLocation!=null && mPhoneNumbers.size()>0){
+            mInfoTextView.setVisibility(View.INVISIBLE);
+
+        }
+
+    }
+
+    private void setButtonsVisibility(){
+
+        if((mPhoneNumbers.size()==0 || mPhoneNumbers.size()>0) && mLocation==null){
+            sendSMSButton.setVisibility(View.INVISIBLE);
+            settingsButton.setVisibility(View.VISIBLE);
+        }if(mPhoneNumbers.size()==0 && mLocation!=null){
+            sendSMSButton.setVisibility(View.INVISIBLE);
+            settingsButton.setVisibility(View.VISIBLE);
+        }if(mPhoneNumbers.size()>0 && mLocation!=null){
+            sendSMSButton.setVisibility(View.VISIBLE);
+            settingsButton.setVisibility(View.INVISIBLE);
+        }
 
     }
 
@@ -197,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         // Get all of the values from shared preferences to set it up
       //  SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPhoneNumbers = new ArrayList<>();
+
         //SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -374,6 +413,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         Log.d("onResume","onResume_");
         setupSharedPreferences();
+        setButtonsVisibility();
+        setInfo();
     }
 
 
@@ -528,7 +569,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             Date date = new Date(mLocation.getTime());
             String formattedTime = format.format(date);
             timeTextView.setText("Paikannusaika: " + formattedTime);
-            locationTypeTextView.setText("Paikannustyyppi: " + mLocation.getProvider());
+            //locationTypeTextView.setText("Paikannustyyppi: " + mLocation.getProvider());
 
         }else if(savedInstanceState != null){
             Log.d("JEE ","" + onOff);

@@ -1,16 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-
-    >
 
     <Preference
-
-        android:title="@string/reset_pref_title"
-        android:icon="@mipmap/icons8_reset_48"
-        android:key="@string/reset_pref"
+        android:icon="@mipmap/message_icon"
+        android:title="@string/message_pref_title"
+        android:key="@string/preference_key"
         />
+
+
+    <EditTextPreference
+        android:key="@string/message_pref"
+        android:text="@dimen/fontSize"
+        android:defaultValue="@string/message_pref_default"
+        android:layout="@layout/mylayout"/>
+
+
+    <Preference
+        android:layout="@layout/custom_layout"/>
+
+
+    <Preference
+        android:defaultValue="@string/number1_pref_default"
+        android:icon="@mipmap/ic_contacts_"
+        android:key="@string/number1_pref"
+        android:title="@string/number1_pref_default"/>
+
+    <Preference
+        android:defaultValue="@string/number2_pref_default"
+        android:icon="@mipmap/ic_contacts_"
+        android:key="@string/number2_pref"
+        android:title="@string/number2_pref_default"/>
+
+    <Preference
+        android:defaultValue="@string/number3_pref_default"
+        android:icon="@mipmap/ic_contacts_"
+        android:key="@string/number3_pref"
+        android:title="@string/number3_pref_default"/>
+
+    <Preference
+        android:defaultValue="@string/number4_pref_default"
+        android:icon="@mipmap/ic_contacts_"
+        android:key="@string/number4_pref"
+        android:title="@string/number4_pref_default"/>
+
+    <Preference
+        android:defaultValue="@string/number5_pref_default"
+        android:icon="@mipmap/ic_contacts_"
+        android:key="@string/number5_pref"
+        android:title="@string/number5_pref_default"
+        />
+
 
     <Preference
         android:layout="@layout/custom_layout"
@@ -18,61 +59,19 @@
 
 
     <Preference
-
-        android:defaultValue="@string/number1_pref_default"
-        android:icon="@mipmap/ic_contacts"
-        android:key="@string/number1_pref"
-
-        android:title="@string/number1_pref_default"
-        />
-
-    <Preference
-        android:defaultValue="@string/number2_pref_default"
-        android:icon="@mipmap/ic_contacts"
-        android:key="@string/number2_pref"
-        android:title="@string/number2_pref_default"
-        />
-
-    <Preference
-        android:defaultValue="@string/number3_pref_default"
-        android:icon="@mipmap/ic_contacts"
-        android:key="@string/number3_pref"
-        android:title="@string/number3_pref_default" />
-
-    <Preference
-        android:defaultValue="@string/number4_pref_default"
-        android:icon="@mipmap/ic_contacts"
-        android:key="@string/number4_pref"
-        android:title="@string/number4_pref_default" />
-
-    <Preference
-        android:defaultValue="@string/number5_pref_default"
-        android:icon="@mipmap/ic_contacts"
-        android:key="@string/number5_pref"
-        android:title="@string/number5_pref_default"
-        />
-
-    <Preference
-    android:layout="@layout/custom_layout"
-    />
-
-    <Preference
-        android:icon="@mipmap/iconfinder_message_172503"
-        android:title="@string/message_pref_title"
-        android:key="@string/preference_key"
-        />
+        android:title="@string/reset_pref_title"
+        android:icon="@mipmap/reset"
+        android:key="@string/reset_pref"/>
 
 
 
 
 
-    <EditTextPreference
-        android:key="@string/message_pref"
-        android:text="@dimen/fontSize"
-        android:defaultValue="@string/message_pref_default"
-        android:layout="@layout/mylayout"
 
-        />
+
+
+
+
 
 
 

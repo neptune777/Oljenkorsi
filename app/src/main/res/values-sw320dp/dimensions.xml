@@ -15,4 +15,7 @@
     <dimen name="notCalcButtonWidth">45dp</dimen>
     <dimen name="maxLength">45dp</dimen>
 
+    <dimen name="buttonDim">200dp</dimen>
+    <dimen name="buttonDimBack">20dp</dimen>
+
 </resources>

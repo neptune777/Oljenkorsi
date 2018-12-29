@@ -5,4 +5,8 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorPreferenceScreenBackground">#FFE</color>
     <color name="colorPreferenceScreenActionBar">#FFA500</color>
+    <color name="colorSettingsButton">#FF0000</color>
+    <color name="colorHelpButton">#FF0000</color>
+    <color name="colorHelpButtonBack">#FFFF00</color>
+    <color name="colorTest">#1E90FF</color>
 </resources>

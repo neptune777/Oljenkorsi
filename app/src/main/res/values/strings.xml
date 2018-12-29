@@ -3,6 +3,8 @@
     <string name="accuracyTextView">Tämän tekstin tilalle päivittyy paikannuksen tarkkuus</string>
     <string name="lokaatioTextView">Tämän tekstin tilalle päivittyy sijainti</string>
     <string name="lokaatioTypeTextView">Tämän tekstin tilalle päivittyy paikannustapa</string>
+    <string name="locationNotReady">Lähetyspainike aktivoituu, kun paikannus on valmis.</string>
+    <string name="phoneNumbersMissing">Lisää vähintään yksi puhelinnumero asetusten kautta.</string>
     <string name="timeTextView">Tämän tekstin tilalle päivittyy paikannusaika</string>
     <string name="showOnMap">Näytä kartalla</string>
     <string name="button">Pyydä apua</string>
