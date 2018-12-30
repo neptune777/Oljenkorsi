@@ -5,7 +5,9 @@
     <string name="lokaatioTypeTextView">Tämän tekstin tilalle päivittyy paikannustapa</string>
     <string name="locationNotReady">Lähetyspainike aktivoituu, kun paikannus on valmis.</string>
     <string name="phoneNumbersMissing">Lisää vähintään yksi puhelinnumero asetusten kautta.</string>
-    <string name="timeTextView">Tämän tekstin tilalle päivittyy paikannusaika</string>
+    <string name="smsSentOrNot1">Tekstiviestejä ei lähetetty.</string>
+    <string name="smsSentOrNot2">Tekstiviesti lähetetty.</string>
+    <string name="smsSentOrNot3">Myös tarkempi sijainti lähetetty.</string>
     <string name="showOnMap">Näytä kartalla</string>
     <string name="button">Pyydä apua</string>
     <string name="button2">Asetukset</string>
