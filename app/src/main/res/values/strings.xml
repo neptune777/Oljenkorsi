@@ -12,10 +12,16 @@
     <string name="button">Pyydä apua</string>
     <string name="button2">Asetukset</string>
     <string name="title_activity_maps">Map</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Asetukset</string>
     <string name="location_not_ready">Paikannustietoja ei ole vielä saatavilla.</string>
     <string name="message_pref_default">Apua, hätätilanne! Sijaintini näkyy koordinaateista.</string>
+    <string name="message__default2">Tässä edellistä tarkemmat koordinaattini.</string>
     <string name="message_pref_title">Lähetettävä viesti</string>
+    <string name="double_message_key">double_message</string>
+    <string name="double_message_pref_key">pref_double_message</string>
+    <string name="double_message_pref_title">Salli automaattiviestit</string>
+    <string name="double_message_text_default">Ei sallittu</string>
+    <string name="double_message_text_2">Sallittu</string>
     <string name="message_pref">message_pref</string>
     <string name="preference_key">preference_key</string>
     <string name="number1_pref">number_1</string>
@@ -36,6 +42,9 @@
     <string name="number_field_default">(tarvittaessa)</string>
     <string name="reset_pref">reset_pref</string>
     <string name="reset_pref_title">Palauta oletusasetukset</string>
+    <string name="message_sending_status">MESSAGE_SENDING_SHARED_PREFERENCES</string>
+    <string name="last_sent_location_accuracy_shared_preference_key">last_sent_accuracy</string>
+
 
 
 

@@ -1,12 +1,15 @@
 package com.example.android.oljenkorsi;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -62,30 +65,44 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private static final String LOCATION_EXTRA = "query";
     private static final String ONOFF_EXTRA = "onoff";
     private static final String MESSAGE_SENT_EXTRA = "message_sent_or_not";
+    private static final String LAST_SENT_ACCURACY_EXTRA = "last_sent_accu";
+    private static final String LAST_SENT_LONGI_EXTRA = "last_sent_longi";
+
     private static final String SEND_BUTTON_CLICKED = "send_button_clicked_or_not";
     private ArrayList<String> mPhoneNumbers;
     private String mMessage;
     private String mMessageSent;
     private boolean mSendButtonClicked;
     private boolean mMoreAccurantCallDone;
+    private boolean mMultiMessagesAllowed =false;
+    private double mLastSentLocationAccuracy;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        changeColor(R.color.red);
 
         context=this;
 
-        kysyLupaa(context);
-        kysyLupaa2(context);
-
-        Log.d("onCreate","messageSent " + mMessageSent);
-
-
-
 
         mMessageSent = getResources().getString(R.string.smsSentOrNot1);
+        Intent intent = new Intent(this, ClosingService.class);
+        startService(intent);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String retrieved = sharedPreferences.getString(getResources().getString(R.string.message_sending_status),"");
+        if(!TextUtils.isEmpty(retrieved) && retrieved!=null && retrieved.length()>0) {
+            mMessageSent = retrieved;
+            Log.d("onCreate","mMessageSent " + mMessageSent);
+        }
+
+
+
+
+       // mMessageSent = getResources().getString(R.string.smsSentOrNot1);
 
         mMessageTextView              = findViewById(R.id.textView3);
         mInfoTextView                 = findViewById(R.id.textView4);
@@ -127,10 +144,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
          if(savedInstanceState!=null && savedInstanceState.getString(MESSAGE_SENT_EXTRA)!=null){
             mMessageSent = savedInstanceState.getString(MESSAGE_SENT_EXTRA);
-            mMessageTextView.setText(mMessageSent);
+        }
+        if(savedInstanceState!=null && savedInstanceState.getFloat(LAST_SENT_ACCURACY_EXTRA)!=0){
+            mLastSentLocationAccuracy = savedInstanceState.getFloat(LAST_SENT_ACCURACY_EXTRA);
         }
 
+        Log.d("onCreate", ("mLastSentLocationAccuracy "+mLastSentLocationAccuracy));
 
+        mMessageTextView.setText(mMessageSent);
         setButtonsVisibility();
         setInfo();
 
@@ -143,28 +164,33 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 Log.d("lokapaikka", ("paikka on muuttunut "+location.getLatitude()+", "+location.getLongitude()));
                 Log.d("lokapaikka", ("tarkkuus "+location.getAccuracy()));
 
+                Log.d("lokapaikka", ("mLastSentLocationAccuracy "+mLastSentLocationAccuracy));
 
-                if(mMessageSent.equals(getResources().getString(R.string.smsSentOrNot2)) && mLocation!=null){
 
-                    boolean isSignificantlyMoreAccurate = isSignificantlyMoreAccurate(location,mLocation);
-                    Log.d("lokapaikka", ("isSignificantlyMoreAccurate "+isSignificantlyMoreAccurate));
-                    if(isSignificantlyMoreAccurate){
-                        mMoreAccurantCallDone=true;
-                        sendSMS();
-
-                    }
-
-                }
 
 
                 if(isBetterLocation(location, mLocation)){
 
                     mLocation = location;         // tallennetaan myöhempää käyttöä varten
 
+
                     //locationTypeTextView.setText("Paikannustyyppi: " + mLocation.getProvider());
                     setButtonsVisibility();
                     setInfo();
 
+
+                }
+
+                if(mMessageSent.equals(getResources().getString(R.string.smsSentOrNot2)) && mLastSentLocationAccuracy!=0.0 && mMultiMessagesAllowed){
+
+                    boolean isSignificantlyMoreAccurate = isSignificantlyMoreAccurate(mLocation.getAccuracy(),mLastSentLocationAccuracy);
+                    Log.d("lokapaikka", ("isSignificantlyMoreAccurate "+isSignificantlyMoreAccurate));
+                    if(isSignificantlyMoreAccurate){
+                        mMessage = getResources().getString(R.string.message__default2);
+                        mMoreAccurantCallDone = true;
+                        sendSMS();
+
+                    }
 
                 }
 
@@ -205,6 +231,16 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         setInfo();
         aloita();
+
+    }
+
+    public void changeColor(int resourseColor) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(ContextCompat.getColor(getApplicationContext(), resourseColor));
+        }
+
+        android.support.v7.app.ActionBar bar = getSupportActionBar();
+        bar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(resourseColor)));
 
     }
 
@@ -252,14 +288,21 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         mMessage = sharedPreferences.getString(getResources().getString(R.string.message_pref),"");
-
+        Log.d("mMessage ","mMessage " + mMessage);
+        String multiMessages = sharedPreferences.getString(getResources().getString(R.string.double_message_pref_key),"");
+        Log.d("setupSharedPreferences ","setupSharedPreferences " + multiMessages);
+        if(multiMessages.equals(getResources().getString(R.string.double_message_text_2))) {
+            mMultiMessagesAllowed = true;
+        }else{
+            mMultiMessagesAllowed = false;
+        }
 
         String num1= sharedPreferences.getString(getResources().getString(R.string.number1_pref),
         getResources().getString(R.string.number1_pref_default));
+        Log.d("setupSharedPreferences_","mMultiMessagesAllowed " + mMultiMessagesAllowed);
 
 
-
-        Log.d("setupSharedPreferences_","setupSharedPreferences_ " + num1);
+       // Log.d("setupSharedPreferences_","setupSharedPreferences_ " + num1);
 
 
         String json1 = sharedPreferences.getString(getResources().getString(R.string.number1_pref),
@@ -274,6 +317,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 "0");
         //  gson.fromJson(json, Person.class).getClass();
 
+
+
         if(json1!="0" && !mPhoneNumbers.contains(getNumberFromObject(json1))){
             mPhoneNumbers.add(getNumberFromObject(json1));
         }if(json2!="0" && !mPhoneNumbers.contains(getNumberFromObject(json2))){
@@ -286,95 +331,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mPhoneNumbers.add(getNumberFromObject(json5));
         }
 
-        for(int i=0;i<mPhoneNumbers.size();i++){
 
-            Log.d("setupSharedPreferences","JSONS " + "i=" + i + " " + mPhoneNumbers.get(i) );
-        }
-
-
-
-
-
-
-
-
-
-/*
-        try {
-        Person person =
-        int number1 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number1_pref),
-            "0"));
-        mPhoneNumbers.add(number1);
-        }catch(NumberFormatException e){
-        Log.d("","" + e.getLocalizedMessage());
-        }
-
-        try {
-
-        int number2 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number2_pref),
-            "0"));
-        mPhoneNumbers.add(number2);
-        }catch(NumberFormatException e){
-        Log.d("","" + e.getLocalizedMessage());
-        }
-
-        try {
-
-        int number3 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number3_pref),
-            "0"));
-        mPhoneNumbers.add(number3);
-        }catch(NumberFormatException e){
-        Log.d("","" + e.getLocalizedMessage());
-        }
-
-        try {
-
-        int number4 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number4_pref),
-           "0"));
-            mPhoneNumbers.add(number4);
-        }catch(NumberFormatException e){
-        Log.d("","" + e.getLocalizedMessage());
-        }
-
-        try {
-
-        int number5 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number5_pref),
-           "0"));
-            mPhoneNumbers.add(number5);
-        }catch(NumberFormatException e){
-            Log.d("","" + e.getLocalizedMessage());
-        }
-
-
-*/
-
-
-
-
-
-
-
-
-    for(int i=0;i<mPhoneNumbers.size();i++){
-
-        Log.d("number_ ", + i+1 + " " + mPhoneNumbers.get(i) );
-    }
-
-
-    /*
-  int number1 = Integer.parseInt(sharedPreferences.getString(getString(R.string.number1_pref),"0"));
-    Log.d("number1"," " + number1);
-
-    mPhoneNumbers.add(number1);
-
-    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number2_pref),"0")));
-
-    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number3_pref),"0")));
-
-    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number4_pref), "0")));
-
-    mPhoneNumbers.add(Integer.parseInt(sharedPreferences.getString(getString(R.string.number5_pref), "0")));
-*/
 
     mMessage = sharedPreferences.getString(getString(R.string.message_pref),
             getResources().getString(R.string.message_pref_default));
@@ -425,12 +382,41 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onResume() {
         super.onResume();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String retrieved = sharedPreferences.getString(getResources().getString(R.string.message_sending_status),"");
+        if(!TextUtils.isEmpty(retrieved) && retrieved!=null && retrieved.length()>0) {
+      //  mMessageSent = retrieved;
+            Log.d("onResume","mMessageSent " + mMessageSent);
+        }
+        mMessageTextView.setText(mMessageSent);
 
-        Log.d("onResume","onResume_");
+
+        float accuracy = sharedPreferences.getFloat(getResources().getString(R.string.last_sent_location_accuracy_shared_preference_key),0);
+        mLastSentLocationAccuracy = (double) accuracy;
+        Log.d("onResume","mLastSentLocationAccuracy " + mLastSentLocationAccuracy);
+
         setupSharedPreferences();
         setButtonsVisibility();
         setInfo();
-        Log.d("onResume","messageSent " + mMessageSent);
+
+    }
+
+
+
+
+
+
+
+    @Override
+    public void onBackPressed() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(getResources().getString(R.string.message_sending_status), mMessageSent);
+        editor.putFloat(getResources().getString(R.string.last_sent_location_accuracy_shared_preference_key), (float) mLastSentLocationAccuracy);
+        editor.commit();
+        String retrieved = sharedPreferences.getString(getResources().getString(R.string.message_sending_status),"");
+        Log.d("onBackPressed", ("mLastSentLocationAccuracy "+mLastSentLocationAccuracy));
+        super.onBackPressed();
     }
 
 
@@ -441,10 +427,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         try {
             kysyLupaa2(context);
             SmsManager smsManager = SmsManager.getDefault();
-
+            String coords = " Latitudi: " + mLocation.getLatitude() + ", Longitudi: " + mLocation.getLongitude();
+            mMessage = mMessage + coords;
             for(int i=0;i<mPhoneNumbers.size();i++) {
-                // smsManager.sendTextMessage(phoneNo, null, msg, null, null);
+                // smsManager.sendTextMessage(mPhoneNumbers.get(i), null, mMessage, null, null);
+                //Log.d("sendSMS","sendSMS " + mPhoneNumbers.get(i) + "i " + i);
             }
+            Log.d("sendSMS","sendSMS " + mMessage);
+
+            mLastSentLocationAccuracy = mLocation.getAccuracy();
+
+
             if(mMoreAccurantCallDone) {
                 mMessageSent = getResources().getString(R.string.smsSentOrNot3);
             }else{
@@ -453,7 +446,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mMessageTextView.setText(mMessageSent);
 
             mSendButtonClicked = false;
-            Toast.makeText(getApplicationContext(), "Message Sent",
+            Toast.makeText(getApplicationContext(), "Tekstiviesti lähetetty",
                     Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
             Toast.makeText(getApplicationContext(),ex.getMessage().toString(),
@@ -464,12 +457,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
         Log.d("sendSMS"," method called");
-    }
-
-
-    public void lopeta(){
-        // Remove the listener you previously added
-        mLocationManager.removeUpdates(mLocationListener);
     }
 
 
@@ -598,8 +585,18 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mSendButtonClicked = savedInstanceState.getBoolean(SEND_BUTTON_CLICKED);
         }
 
-        mMessageSent = mMessageSent;
-    }
+        if(savedInstanceState != null && savedInstanceState.getDouble(LAST_SENT_ACCURACY_EXTRA)!=0){
+            mLastSentLocationAccuracy = savedInstanceState.getDouble(LAST_SENT_ACCURACY_EXTRA);
+        }
+
+        if(savedInstanceState != null && savedInstanceState.getString(MESSAGE_SENT_EXTRA)!=null) {
+
+            mMessageSent = savedInstanceState.getString(MESSAGE_SENT_EXTRA);
+        }
+            mMessageTextView.setText(mMessageSent);
+        }
+
+
 
 
 
@@ -713,47 +710,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
 
-    protected boolean isBetterLocation2(Location location, Location currentBestLocation) {
-        if (currentBestLocation == null) {
-            // A new location is always better than no location
-            return true;
-        }
 
-        // Check whether the new location fix is newer or older
-        long timeDelta = location.getTime() - currentBestLocation.getTime();
-        boolean isSignificantlyNewer = timeDelta > TWO_MINUTES;
-        boolean isSignificantlyOlder = timeDelta < -TWO_MINUTES;
-        boolean isNewer = timeDelta > 0;
-
-        // If it's been more than two minutes since the current location, use the new location
-        // because the user has likely moved
-        if (isSignificantlyNewer) {
-            return true;
-            // If the new location is more than two minutes older, it must be worse
-        } else if (isSignificantlyOlder) {
-            return false;
-        }
-
-        // Check whether the new location fix is more or less accurate
-        int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation.getAccuracy());
-        boolean isLessAccurate = accuracyDelta > 0;
-        boolean isMoreAccurate = accuracyDelta < 0;
-        boolean isSignificantlyLessAccurate = accuracyDelta > 200;
-
-        // Check if the old and new location are from the same provider
-        boolean isFromSameProvider = isSameProvider(location.getProvider(),
-                currentBestLocation.getProvider());
-
-        // Determine location quality using a combination of timeliness and accuracy
-        if (isMoreAccurate) {
-            return true;
-        } else if (isNewer && !isLessAccurate) {
-            return true;
-        } else if (isNewer && !isSignificantlyLessAccurate && isFromSameProvider) {
-            return true;
-        }
-        return false;
-    }
 
     /** Checks whether two providers are the same */
     private boolean isSameProvider(String provider1, String provider2) {
@@ -766,10 +723,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
 
-    public boolean isSignificantlyMoreAccurate(Location location, Location currentBestLocation){
+    public boolean isSignificantlyMoreAccurate(double location, double currentBestLocation){
 
         // Check whether the new location fix is more or less accurate
-        int accuracyDelta = (int) (currentBestLocation.getAccuracy() - location.getAccuracy());
+        int accuracyDelta = (int) (currentBestLocation - location);
         boolean isSignificantlyMoreAccurate = accuracyDelta > 200;
 
         return isSignificantlyMoreAccurate;
@@ -799,6 +756,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         outState.putString(MESSAGE_SENT_EXTRA,mMessageSent);
         outState.putBoolean(SEND_BUTTON_CLICKED,mSendButtonClicked);
+
+        if(mLastSentLocationAccuracy!=0) {
+            outState.putDouble(LAST_SENT_LONGI_EXTRA,mLastSentLocationAccuracy);
+        }
 
     }
 

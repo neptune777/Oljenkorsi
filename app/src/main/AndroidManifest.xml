@@ -16,6 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_sms"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".ClosingService"
+            android:stopWithTask="false"/>
         <activity android:name=".MainActivity"
             android:launchMode="singleTop">
 

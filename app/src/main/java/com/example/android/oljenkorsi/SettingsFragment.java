@@ -37,6 +37,7 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,8 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+
+import org.w3c.dom.Text;
 
 
 // TODO (1) Implement OnPreferenceChangeListener
@@ -59,6 +62,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     boolean setDefaultsCalled;
     Intent mStarterIntent;
 
+
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
 
@@ -71,6 +75,18 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
        // prefScreen.getPreference(R.string.number1_pref).setLayoutResource((android.support.constraint.ConstraintLayout)View.inflate(getContext(),R.layout.custom_layout, null));
         //rLay=(android.support.constraint.ConstraintLayout)View.inflate(getContext(),R.layout.custom_layout, null);
         // Go through all of the preferences, and set up their preference summary.
+
+        String double_msg_allowance = sharedPreferences.getString(getResources().getString(R.string.double_message_pref_key), "");
+        Preference preference = findPreference(getResources().getString(R.string.double_message_key));
+
+        Log.d("onCreatePreferences","onCreatePreferences " + double_msg_allowance);
+        /*
+        if(double_msg_allowance!=null && TextUtils.isEmpty(double_msg_allowance)) {
+           preference.setSummary(double_msg_allowance);
+        }else{
+           preference.setSummary(getResources().getString(R.string.double_message_text_default));
+        }
+        */
         for (int i = 0; i < count; i++) {
             Preference p = prefScreen.getPreference(i);
             // You don't need to set up preference summaries for checkbox preferences because
@@ -83,13 +99,21 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
              //  gson.fromJson(json, Person.class).getClass();
                 Person person;
 
-                if(i==4) {
-                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
-                }else if(i==5) {
-                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
+                if(i==3) {
+
+                    if(!TextUtils.isEmpty(double_msg_allowance)) {
+                        setPreferenceSummary(p, double_msg_allowance);
+                    }else{
+                        setPreferenceSummary(p, getResources().getString(R.string.double_message_text_default));
+                    }
+                    Log.d("p.getKey()","p.getKey() " + double_msg_allowance);
                 }else if(i==6) {
-                     setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
+                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
                 }else if(i==7) {
+                    setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
+                }else if(i==8) {
+                     setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
+                }else if(i==9) {
                      setPreferenceSummary(p, getResources().getString(R.string.number_field_default));
                 }else if(i==1) {
                     //setPreferenceSummary(p, getResources().getString(R.string.message_pref_default));
@@ -105,15 +129,15 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                         String value = person.getPhoneNumber();
                         setPreferenceSummary(p, value);
 
-                        if(i==3) {
-                            p.setTitle(person.getName());
-                        }else if(i==4) {
-                            p.setTitle(person.getName());
-                        }else if(i==5) {
+                        if(i==5) {
                             p.setTitle(person.getName());
                         }else if(i==6) {
                             p.setTitle(person.getName());
                         }else if(i==7) {
+                            p.setTitle(person.getName());
+                        }else if(i==8) {
+                            p.setTitle(person.getName());
+                        }else if(i==9) {
                             p.setTitle(person.getName());
                         }
 
@@ -152,6 +176,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         preference5.setOnPreferenceChangeListener(this);
         Preference preference6 = findPreference(getResources().getString(R.string.message_pref));
         preference6.setOnPreferenceChangeListener(this);
+        Preference preference7 = findPreference(getResources().getString(R.string.double_message_key));
+        preference7.setOnPreferenceChangeListener(this);
+
 
 
 
@@ -180,7 +207,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
+        Log.d("onSharedPreferenceChang", "EEE_ Preference + key" + key);
 
         if (!setDefaultsCalled) {
             // Figure out which preference was changed
@@ -188,7 +215,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
             // preference.getSummary();
             if (null != preference) {
                 // Updates the summary for the preference
-                if (!(preference instanceof EditTextPreference)) {
+                if (!(preference instanceof EditTextPreference && !key.equals(getResources().getString(R.string.double_message_pref_key)))) {
 
                     Gson gson = new Gson();
                     String json = sharedPreferences.getString(preference.getKey(), "");
@@ -200,7 +227,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                     setPreferenceSummary(preference, value);
                     Log.d("onSharedPreferenceChang", "EEE_ Preference " + value);
 
-                } else if (preference instanceof EditTextPreference) {
+                }else if (key.equals(getResources().getString(R.string.double_message_pref_key))) {
+
+                    String value = sharedPreferences.getString(preference.getKey(), "");
+                    setPreferenceSummary(preference, value);
+                    Log.d("onSharedPreferenceChang", "EEE_ EditTextPreference " + value);
+
+                }
+                else if (preference instanceof EditTextPreference) {
 
                     String value = sharedPreferences.getString(preference.getKey(), "");
                     setPreferenceSummary(preference, value);
@@ -242,9 +276,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
 
         Log.d("onPreferenceChange","onPreferenceChange " +newValue);
+        Log.d("PREET","preference.getKey() " + preference.getKey());
 
-
-
+/*
             try {
                 int size = ((String) newValue).length();
                 if (size <= 0) {
@@ -257,20 +291,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                 return false;
             }
 
-
-        if(preference instanceof EditTextPreference){
-            Log.d("PREET","PREET " + newValue);
-
-            SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-
-            editor.putString(getResources().getString(R.string.message_pref), (String) newValue);
-
-            editor.commit();
-
-            return true;
-
-        }
+*/
 
 
         return true;
@@ -379,13 +400,53 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
             {
                 // Run your custom method
 
-                Preference preference =  findPreference(getResources().getString(R.string.message_pref));
+              /* Preference preference =  findPreference(getResources().getString(R.string.message_pref));
                 int l = preference.getLayoutResource();
                 EditText editText = getActivity().findViewById(l);
-
-                Log.d("preference7 ", "preference7 " + l);
+            */
+            //    Log.d("preference7 ", "preference7 " + l);
                 Log.d("preference7 ", "preference7");
                 setDefaults();
+
+
+                return true;
+            }
+        });
+
+        final Preference preference8 =  findPreference(getResources().getString(R.string.double_message_key));
+
+        preference8.setOnPreferenceClickListener( new Preference.OnPreferenceClickListener()
+        {
+            @SuppressLint("RestrictedApi")
+            public boolean onPreferenceClick(Preference pref )
+            {
+                // Run your custom method
+
+                if(pref.getSummary().equals(getResources().getString(R.string.double_message_text_default))){
+                    pref.setSummary(getResources().getString(R.string.double_message_text_2));
+                }else if(pref.getSummary().equals(getResources().getString(R.string.double_message_text_2))){
+                    pref.setSummary(getResources().getString(R.string.double_message_text_default));
+                }
+
+/*
+                SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
+                String allowance = sharedPreferences.getString(getResources().getString(R.string.double_message_pref_key),"");
+                Log.d("preference8 ", "preference8 allowance " +  allowance);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+*/
+                SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(getResources().getString(R.string.double_message_pref_key), (String) pref.getSummary());
+
+              //  editor.putString(getResources().getString(R.string.double_message_pref_key), (String) preference8.getSummary());
+
+                editor.commit();
+              String  allowance = sharedPreferences.getString(getResources().getString(R.string.double_message_pref_key),"");
+
+               // Log.d("preference8 ", "preference8 " +  preference8.getKey());
+                //Log.d("preference8 ", "preference8 " +  preference8.getSummary());
+                Log.d("preference8 ", "preference8 allowance " +  allowance);
+
 
 
                 return true;
@@ -412,9 +473,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         editor.remove(getResources().getString(R.string.number4_pref));
         editor.remove(getResources().getString(R.string.number5_pref));
         editor.remove(getResources().getString(R.string.message_pref));
+
+
+        editor.remove(getResources().getString(R.string.double_message_pref_key));
         editor.commit();
 
-
+        Preference preference = findPreference(getResources().getString(R.string.number2_pref));
+      //  preference.setSummary(getResources().getString(R.string.number2_pref_default),getResources().getString(R.string.number1_pref_default));
         getActivity().recreate();
 
 
@@ -422,12 +487,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        getPreferenceScreen().getSharedPreferences()
-                .unregisterOnSharedPreferenceChangeListener(this);
-    }
 
 
     private void callContacts(Preference preference){

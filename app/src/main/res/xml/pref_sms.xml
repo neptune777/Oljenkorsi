@@ -7,6 +7,7 @@
         android:icon="@mipmap/message_icon"
         android:title="@string/message_pref_title"
         android:key="@string/preference_key"
+
         />
 
 
@@ -16,40 +17,57 @@
         android:defaultValue="@string/message_pref_default"
         android:layout="@layout/mylayout"/>
 
+    <Preference
+        android:layout="@layout/custom_layout"/>
+
+
+    <Preference
+
+        android:title="@string/double_message_pref_title"
+        android:icon="@mipmap/double_message_icon"
+        android:key="@string/double_message_key"
+        android:defaultValue="@string/double_message_text_default"
+       />
+
 
     <Preference
         android:layout="@layout/custom_layout"/>
 
 
     <Preference
-        android:defaultValue="@string/number1_pref_default"
+
         android:icon="@mipmap/ic_contacts_"
         android:key="@string/number1_pref"
-        android:title="@string/number1_pref_default"/>
+        android:title="@string/number1_pref_default"
+        />
 
     <Preference
-        android:defaultValue="@string/number2_pref_default"
+
         android:icon="@mipmap/ic_contacts_"
         android:key="@string/number2_pref"
-        android:title="@string/number2_pref_default"/>
+        android:title="@string/number2_pref_default"
+        android:defaultValue="@string/number_field_default"/>
 
     <Preference
-        android:defaultValue="@string/number3_pref_default"
+
         android:icon="@mipmap/ic_contacts_"
         android:key="@string/number3_pref"
-        android:title="@string/number3_pref_default"/>
+        android:title="@string/number3_pref_default"
+        android:defaultValue="@string/number_field_default"/>
 
     <Preference
-        android:defaultValue="@string/number4_pref_default"
+
         android:icon="@mipmap/ic_contacts_"
         android:key="@string/number4_pref"
-        android:title="@string/number4_pref_default"/>
+        android:title="@string/number4_pref_default"
+        android:defaultValue="@string/number_field_default"/>
 
     <Preference
-        android:defaultValue="@string/number5_pref_default"
+
         android:icon="@mipmap/ic_contacts_"
         android:key="@string/number5_pref"
         android:title="@string/number5_pref_default"
+        android:defaultValue="@string/number_field_default"
         />
 
 
@@ -62,6 +80,9 @@
         android:title="@string/reset_pref_title"
         android:icon="@mipmap/reset"
         android:key="@string/reset_pref"/>
+
+
+
 
 
 

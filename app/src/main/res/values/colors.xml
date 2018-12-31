@@ -9,4 +9,5 @@
     <color name="colorHelpButton">#FF0000</color>
     <color name="colorHelpButtonBack">#FFFF00</color>
     <color name="colorTest">#1E90FF</color>
+    <color name="red">#FF0000</color>
 </resources>
