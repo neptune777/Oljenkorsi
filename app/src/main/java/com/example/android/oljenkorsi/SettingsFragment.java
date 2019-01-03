@@ -236,7 +236,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                 }
                 else if (preference instanceof EditTextPreference) {
 
-                    String value = sharedPreferences.getString(preference.getKey(), "");
+                    String value = sharedPreferences.getString(preference.getKey(), getString(R.string.message_pref_default));
                     setPreferenceSummary(preference, value);
                     Log.d("onSharedPreferenceChang", "EEE_ EditTextPreference " + value);
 
@@ -277,6 +277,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
         Log.d("onPreferenceChange","onPreferenceChange " +newValue);
         Log.d("PREET","preference.getKey() " + preference.getKey());
+
+        if(preference instanceof EditTextPreference){
+            SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(getResources().getString(R.string.message_pref), (String) preference.getSummary());
+            editor.commit();
+
+        }
 
 /*
             try {
@@ -478,13 +486,38 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         editor.remove(getResources().getString(R.string.double_message_pref_key));
         editor.commit();
 
-        Preference preference = findPreference(getResources().getString(R.string.number2_pref));
-      //  preference.setSummary(getResources().getString(R.string.number2_pref_default),getResources().getString(R.string.number1_pref_default));
-        getActivity().recreate();
+        Preference number1preference = findPreference(getResources().getString(R.string.number1_pref));
+        number1preference.setTitle(getResources().getString(R.string.number1_pref_default));
+        Preference number2preference = findPreference(getResources().getString(R.string.number2_pref));
+        number2preference.setTitle(getResources().getString(R.string.number2_pref_default));
+        Preference number3preference = findPreference(getResources().getString(R.string.number3_pref));
+        number3preference.setTitle(getResources().getString(R.string.number3_pref_default));
+        Preference number4preference = findPreference(getResources().getString(R.string.number4_pref));
+        number4preference.setTitle(getResources().getString(R.string.number4_pref_default));
+        Preference number5preference = findPreference(getResources().getString(R.string.number5_pref));
+        number5preference.setTitle(getResources().getString(R.string.number5_pref_default));
+
+        Preference message_preference = findPreference(getString(R.string.message_pref));
+        message_preference.setSummary(getString(R.string.message_pref_default));
+
+        number1preference.setSummary(null);
+        number2preference.setSummary(getResources().getString(R.string.number_field_default));
+        number3preference.setSummary(getResources().getString(R.string.number_field_default));
+        number4preference.setSummary(getResources().getString(R.string.number_field_default));
+        number5preference.setSummary(getResources().getString(R.string.number_field_default));
+
+      //  getActivity().recreate();
 
 
         // prefsEditor.putString("MyObject", json);
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getPreferenceScreen().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
     }
 
 
@@ -541,9 +574,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                         editor.putString(mActivePreference_key, json);
                        // prefsEditor.putString("MyObject", json);
                         editor.commit();
-
+                        preference.setSummary(number);
                         String s = (String) preference.getSummary();
-                        Log.d("SUMMARY","SUMMARY " +s);
+                        Log.d("SUMMARY_","SUMMARY_ " +s);
 
                     }
 

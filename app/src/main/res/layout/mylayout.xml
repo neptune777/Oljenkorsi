@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/fontSize"
         android:focusable="false"
+        android:defaultValue="@string/message_pref_default"
 
         android:background="@null"
 
