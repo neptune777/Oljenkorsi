@@ -174,7 +174,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         preference4.setOnPreferenceChangeListener(this);
         Preference preference5 = findPreference(getResources().getString(R.string.number5_pref));
         preference5.setOnPreferenceChangeListener(this);
-        Preference preference6 = findPreference(getResources().getString(R.string.message_pref));
+        Preference preference6 = findPreference(getString(R.string.message_pref));
         preference6.setOnPreferenceChangeListener(this);
         Preference preference7 = findPreference(getResources().getString(R.string.double_message_key));
         preference7.setOnPreferenceChangeListener(this);
@@ -283,6 +283,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(getResources().getString(R.string.message_pref), (String) preference.getSummary());
             editor.commit();
+            preference.setSummary((CharSequence) newValue);
+
 
         }
 
@@ -497,8 +499,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         Preference number5preference = findPreference(getResources().getString(R.string.number5_pref));
         number5preference.setTitle(getResources().getString(R.string.number5_pref_default));
 
-        Preference message_preference = findPreference(getString(R.string.message_pref));
+        Preference message_preference = findPreference(getResources().getString(R.string.message_pref));
         message_preference.setSummary(getString(R.string.message_pref_default));
+
+        Preference double_message_preference = findPreference(getString(R.string.double_message_key));
+        double_message_preference.setSummary(getString(R.string.double_message_text_default));
 
         number1preference.setSummary(null);
         number2preference.setSummary(getResources().getString(R.string.number_field_default));
