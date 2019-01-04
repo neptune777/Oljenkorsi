@@ -427,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         try {
             kysyLupaa2(context);
             SmsManager smsManager = SmsManager.getDefault();
-            String coords = " Latitudi: " + mLocation.getLatitude() + ", Longitudi: " + mLocation.getLongitude();
+            String coords = " https://www.google.com/maps/search/?api=1&query=<" + mLocation.getLatitude() + ">,<" + mLocation.getLongitude() + ">";
             mMessage = mMessage + coords;
             for(int i=0;i<mPhoneNumbers.size();i++) {
                 smsManager.sendTextMessage(mPhoneNumbers.get(i), null, mMessage, null, null);

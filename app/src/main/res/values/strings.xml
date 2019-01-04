@@ -14,7 +14,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="action_settings">Asetukset</string>
     <string name="location_not_ready">Paikannustietoja ei ole vielä saatavilla.</string>
-    <string name="message_pref_default">Apua, hätätilanne! Sijaintini näkyy koordinaateista.</string>
+    <string name="message_pref_default">Apua, hätätilanne! Karttaa klikkaamalla näet sijaintini.</string>
     <string name="message__default2">Tässä edellistä tarkemmat koordinaattini.</string>
     <string name="message_pref_title">Lähetettävä viesti</string>
     <string name="double_message_key">double_message</string>
