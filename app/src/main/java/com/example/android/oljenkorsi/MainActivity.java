@@ -430,7 +430,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             String coords = " Latitudi: " + mLocation.getLatitude() + ", Longitudi: " + mLocation.getLongitude();
             mMessage = mMessage + coords;
             for(int i=0;i<mPhoneNumbers.size();i++) {
-               // smsManager.sendTextMessage(mPhoneNumbers.get(i), null, mMessage, null, null);
+                smsManager.sendTextMessage(mPhoneNumbers.get(i), null, mMessage, null, null);
                 Log.d("sendSMS","sendSMS " + mPhoneNumbers.get(i) + "i " + i);
             }
          //   Log.d("sendSMS","sendSMS " + mMessage);
